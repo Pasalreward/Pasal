@@ -14,6 +14,103 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f5f5f5;
+            overflow-x: hidden;
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s, visibility 0.5s;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader {
+            width: 80px;
+            height: 80px;
+            border: 8px solid rgba(255, 255, 255, 0.3);
+            border-top: 8px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .loading-text {
+            color: white;
+            font-size: 1.5em;
+            margin-top: 20px;
+            font-weight: 600;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
         }
 
         /* Navbar */
@@ -23,6 +120,7 @@
             position: sticky;
             top: 0;
             z-index: 1000;
+            animation: slideInLeft 0.6s ease-out;
         }
 
         .nav-content {
@@ -41,6 +139,7 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            animation: float 3s ease-in-out infinite;
         }
 
         .nav-links {
@@ -53,11 +152,28 @@
             text-decoration: none;
             color: #333;
             font-weight: 500;
-            transition: color 0.3s;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s;
         }
 
         .nav-links a:hover {
             color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
         }
 
         .nav-buttons {
@@ -73,6 +189,11 @@
             font-size: 1.5em;
             cursor: pointer;
             color: #333;
+            transition: all 0.3s;
+        }
+
+        .cart-btn:hover {
+            transform: scale(1.1) rotate(5deg);
         }
 
         .admin-btn {
@@ -82,6 +203,12 @@
             border-radius: 25px;
             font-size: 1em;
             font-weight: 600;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .admin-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
         }
 
         .cart-count {
@@ -98,9 +225,10 @@
             justify-content: center;
             font-size: 0.6em;
             font-weight: bold;
+            animation: pulse 2s ease-in-out infinite;
         }
 
-        .login-btn, .account-btn, .logout-btn-nav {
+        .login-btn, .logout-btn-nav {
             padding: 10px 25px;
             border: none;
             border-radius: 25px;
@@ -112,11 +240,12 @@
         .login-btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
 
         .login-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
         }
 
         .logout-btn-nav {
@@ -125,22 +254,45 @@
             padding: 8px 20px;
         }
 
+        .logout-btn-nav:hover {
+            background: #fdd;
+            transform: translateY(-2px);
+        }
+
         /* Hero Section */
         .hero {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 80px 40px;
             text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: float 20s linear infinite;
         }
 
         .hero h1 {
             font-size: 3.5em;
             margin-bottom: 20px;
+            position: relative;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
         }
 
         .hero p {
             font-size: 1.3em;
             opacity: 0.9;
+            position: relative;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
         }
 
         /* Main Content */
@@ -154,6 +306,50 @@
             font-size: 2em;
             margin-bottom: 30px;
             color: #333;
+            animation: fadeInUp 0.8s ease-out 0.6s both;
+        }
+
+        /* Empty State */
+        .empty-products {
+            text-align: center;
+            padding: 100px 40px;
+            animation: fadeIn 1s ease-out 0.8s both;
+        }
+
+        .empty-products-icon {
+            font-size: 6em;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .empty-products h3 {
+            font-size: 2em;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .empty-products p {
+            font-size: 1.2em;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .admin-prompt {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            border-radius: 30px;
+            border: none;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .admin-prompt:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.4);
         }
 
         /* Products Grid */
@@ -169,12 +365,24 @@
             border-radius: 15px;
             overflow: hidden;
             box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            transition: transform 0.3s;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out forwards;
         }
 
+        .product-card:nth-child(1) { animation-delay: 0.1s; }
+        .product-card:nth-child(2) { animation-delay: 0.2s; }
+        .product-card:nth-child(3) { animation-delay: 0.3s; }
+        .product-card:nth-child(4) { animation-delay: 0.4s; }
+        .product-card:nth-child(5) { animation-delay: 0.5s; }
+        .product-card:nth-child(6) { animation-delay: 0.6s; }
+        .product-card:nth-child(7) { animation-delay: 0.7s; }
+        .product-card:nth-child(8) { animation-delay: 0.8s; }
+
         .product-card:hover {
-            transform: translateY(-10px);
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
         }
 
         .product-image {
@@ -186,12 +394,33 @@
             justify-content: center;
             font-size: 4em;
             overflow: hidden;
+            position: relative;
+        }
+
+        .product-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .product-card:hover .product-image::before {
+            left: 100%;
         }
 
         .product-image img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .product-card:hover .product-image img {
+            transform: scale(1.1);
         }
 
         .product-info {
@@ -220,7 +449,10 @@
         .product-price {
             font-size: 1.5em;
             font-weight: bold;
-            color: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .add-to-cart {
@@ -232,17 +464,23 @@
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
 
         .add-to-cart:hover {
-            transform: scale(1.05);
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .add-to-cart:active {
+            transform: scale(0.95);
         }
 
         .delete-product {
             position: absolute;
             top: 10px;
             right: 10px;
-            background: rgba(255, 0, 0, 0.8);
+            background: rgba(255, 0, 0, 0.9);
             color: white;
             border: none;
             padding: 8px 12px;
@@ -250,6 +488,13 @@
             cursor: pointer;
             font-size: 1.2em;
             z-index: 10;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(255, 0, 0, 0.3);
+        }
+
+        .delete-product:hover {
+            background: rgba(255, 0, 0, 1);
+            transform: rotate(90deg) scale(1.1);
         }
 
         /* Modal */
@@ -261,9 +506,11 @@
             width: 100%;
             height: 100%;
             background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
             z-index: 2000;
             align-items: center;
             justify-content: center;
+            animation: fadeIn 0.3s ease-out;
         }
 
         .modal.active {
@@ -278,6 +525,8 @@
             width: 90%;
             max-height: 90vh;
             overflow-y: auto;
+            animation: fadeInUp 0.4s ease-out;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
 
         .modal-header {
@@ -297,6 +546,12 @@
             color: #999;
             background: none;
             border: none;
+            transition: all 0.3s;
+        }
+
+        .close-modal:hover {
+            color: #333;
+            transform: rotate(90deg);
         }
 
         .form-group {
@@ -317,6 +572,7 @@
             border-radius: 8px;
             font-size: 16px;
             font-family: inherit;
+            transition: all 0.3s;
         }
 
         .form-group textarea {
@@ -327,6 +583,7 @@
         .form-group input:focus, .form-group textarea:focus {
             outline: none;
             border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
         .image-upload-area {
@@ -340,6 +597,7 @@
 
         .image-upload-area:hover {
             background: #f8f9ff;
+            border-color: #764ba2;
         }
 
         .image-preview {
@@ -352,6 +610,7 @@
             max-height: 300px;
             border-radius: 8px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            animation: fadeIn 0.5s ease-out;
         }
 
         .submit-btn {
@@ -364,10 +623,17 @@
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
 
         .submit-btn:hover {
             transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
         }
 
         .switch-form {
@@ -380,6 +646,11 @@
             color: #667eea;
             cursor: pointer;
             font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .switch-form a:hover {
+            color: #764ba2;
         }
 
         .message {
@@ -387,6 +658,7 @@
             border-radius: 8px;
             margin-bottom: 20px;
             text-align: center;
+            animation: fadeInUp 0.3s ease-out;
         }
 
         .message.success {
@@ -411,6 +683,7 @@
             align-items: center;
             padding: 15px;
             border-bottom: 1px solid #eee;
+            animation: fadeInUp 0.3s ease-out;
         }
 
         .cart-item-info h4 {
@@ -430,6 +703,12 @@
             padding: 8px 15px;
             border-radius: 5px;
             cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .remove-item:hover {
+            background: #fdd;
+            transform: scale(1.05);
         }
 
         .cart-total {
@@ -452,6 +731,14 @@
             font-weight: 600;
             cursor: pointer;
             margin-top: 15px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .checkout-btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
         }
 
         .empty-cart {
@@ -463,6 +750,7 @@
         .user-greeting {
             color: #667eea;
             font-weight: 600;
+            animation: fadeIn 0.5s ease-out;
         }
 
         .admin-badge {
@@ -472,10 +760,35 @@
             border-radius: 12px;
             font-size: 0.8em;
             margin-left: 8px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
         }
     </style>
 </head>
 <body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loader"></div>
+        <div class="loading-text">Loading Pasal...</div>
+    </div>
+
     <!-- Navbar -->
     <nav class="navbar">
         <div class="nav-content">
@@ -510,8 +823,10 @@
     <!-- Products Section -->
     <div class="container">
         <h2 class="section-title">Featured Products</h2>
-        <div class="products-grid" id="productsGrid">
-            <!-- Products will be loaded here -->
+        <div id="productsContainer">
+            <div class="products-grid" id="productsGrid">
+                <!-- Products will be loaded here -->
+            </div>
         </div>
     </div>
 
@@ -617,7 +932,7 @@
     <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
         // Firebase Configuration
         const firebaseConfig = {
@@ -633,39 +948,36 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
+        // Set persistence to LOCAL (remembers login across sessions)
+        setPersistence(auth, browserLocalPersistence);
+
         // Admin users
         const ADMIN_USERS = ['optbrn', 'gamingdj640'];
-
-        // Default Products Data
-        const defaultProducts = [
-            { id: 'default-1', name: "Wireless Headphones", price: 79.99, emoji: "🎧", description: "Premium sound quality with noise cancellation", isDefault: true },
-            { id: 'default-2', name: "Smart Watch", price: 199.99, emoji: "⌚", description: "Track your fitness and stay connected", isDefault: true },
-            { id: 'default-3', name: "Laptop Backpack", price: 49.99, emoji: "🎒", description: "Durable and spacious for all your gear", isDefault: true },
-            { id: 'default-4', name: "Bluetooth Speaker", price: 59.99, emoji: "🔊", description: "Portable speaker with incredible bass", isDefault: true },
-            { id: 'default-5', name: "Coffee Maker", price: 89.99, emoji: "☕", description: "Brew perfect coffee every morning", isDefault: true },
-            { id: 'default-6', name: "Yoga Mat", price: 29.99, emoji: "🧘", description: "Non-slip and eco-friendly material", isDefault: true },
-            { id: 'default-7', name: "Gaming Mouse", price: 69.99, emoji: "🖱️", description: "Precision control for competitive gaming", isDefault: true },
-            { id: 'default-8', name: "Phone Stand", price: 19.99, emoji: "📱", description: "Adjustable stand for any device", isDefault: true }
-        ];
 
         // Shopping Cart and State
         let cart = [];
         let currentUser = null;
         let isAdmin = false;
-        let products = [...defaultProducts];
+        let products = [];
         let selectedImage = null;
+
+        // Loading screen
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loadingScreen').classList.add('hidden');
+            }, 1500);
+        });
 
         // Load products from storage
         async function loadProductsFromStorage() {
             try {
                 const result = await window.storage.get('admin-products', true);
                 if (result && result.value) {
-                    const storedProducts = JSON.parse(result.value);
-                    products = [...defaultProducts, ...storedProducts];
+                    products = JSON.parse(result.value);
                 }
             } catch (error) {
-                console.log('No stored products found, using defaults');
-                products = [...defaultProducts];
+                console.log('No stored products found');
+                products = [];
             }
             loadProducts();
         }
@@ -673,8 +985,7 @@
         // Save products to storage
         async function saveProductsToStorage() {
             try {
-                const adminProducts = products.filter(p => !p.isDefault);
-                await window.storage.set('admin-products', JSON.stringify(adminProducts), true);
+                await window.storage.set('admin-products', JSON.stringify(products), true);
             } catch (error) {
                 console.error('Error saving products:', error);
             }
@@ -689,22 +1000,45 @@
         // Load Products
         function loadProducts() {
             const grid = document.getElementById('productsGrid');
-            grid.innerHTML = products.map(product => `
-                <div class="product-card">
-                    ${isAdmin && !product.isDefault ? `<button class="delete-product" onclick="deleteProduct('${product.id}')">✕</button>` : ''}
-                    <div class="product-image">
-                        ${product.image ? `<img src="${product.image}" alt="${product.name}">` : product.emoji}
+            const container = document.getElementById('productsContainer');
+            
+            if (products.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-products">
+                        <div class="empty-products-icon">🛒</div>
+                        <h3>No Products Yet</h3>
+                        <p>Our store is empty. ${isAdmin ? 'Add some products to get started!' : 'Check back soon for amazing products!'}</p>
+                        ${isAdmin ? '<button class="admin-prompt" onclick="openAdminPanel()">Add Your First Product</button>' : ''}
                     </div>
-                    <div class="product-info">
-                        <div class="product-name">${product.name}</div>
-                        <div class="product-description">${product.description}</div>
-                        <div class="product-footer">
-                            <div class="product-price">$${parseFloat(product.price).toFixed(2)}</div>
-                            <button class="add-to-cart" onclick="addToCart('${product.id}')">Add to Cart</button>
+                `;
+            } else {
+                grid.innerHTML = products.map(product => `
+                    <div class="product-card">
+                        ${isAdmin ? `<button class="delete-product" onclick="deleteProduct('${product.id}')">✕</button>` : ''}
+                        <div class="product-image">
+                            ${product.image ? `<img src="${product.image}" alt="${product.name}">` : '📦'}
+                        </div>
+                        <div class="product-info">
+                            <div class="product-name">${product.name}</div>
+                            <div class="product-description">${product.description}</div>
+                            <div class="product-footer">
+                                <div class="product-price">$${parseFloat(product.price).toFixed(2)}</div>
+                                <button class="add-to-cart" onclick="addToCart('${product.id}')">Add to Cart</button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            `).join('');
+                `).join('');
+            }
+        }
+
+        // Open Admin Panel
+        window.openAdminPanel = function() {
+            if (isAdmin) {
+                document.getElementById('adminModal').classList.add('active');
+            } else {
+                alert('Please login as an admin to add products');
+                document.getElementById('loginModal').classList.add('active');
+            }
         }
 
         // Add to Cart
@@ -745,7 +1079,7 @@
                 cartItems.innerHTML = cart.map((item, index) => `
                     <div class="cart-item">
                         <div class="cart-item-info">
-                            <h4>${item.emoji || '📦'} ${item.name}</h4>
+                            <h4>📦 ${item.name}</h4>
                             <div class="cart-item-price">$${parseFloat(item.price).toFixed(2)}</div>
                         </div>
                         <button class="remove-item" onclick="removeFromCart(${index})">Remove</button>
@@ -839,9 +1173,7 @@
                 name: name,
                 description: description,
                 price: parseFloat(price),
-                image: selectedImage,
-                emoji: '📦',
-                isDefault: false
+                image: selectedImage
             };
 
             products.push(newProduct);
@@ -976,6 +1308,7 @@
 
                 if (isAdmin) {
                     adminButtonContainer.style.display = 'block';
+                    loadProducts(); // Reload to show delete buttons
                 } else {
                     adminButtonContainer.style.display = 'none';
                 }
@@ -987,6 +1320,7 @@
                 document.getElementById('showLoginBtn').addEventListener('click', () => {
                     document.getElementById('loginModal').classList.add('active');
                 });
+                loadProducts(); // Reload to hide delete buttons
             }
         });
 
