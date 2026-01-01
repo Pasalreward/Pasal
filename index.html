@@ -65,17 +65,31 @@
             background-clip: text; margin: 10px 0 15px 0;
         }
 
-        .daily-box {
-            margin-top: 25px; padding: 15px; background: rgba(124, 58, 237, 0.1);
-            border-radius: 15px; border: 1px solid rgba(124, 58, 237, 0.3);
+        .daily-box, .referral-box {
+            margin-top: 25px; padding: 15px; border-radius: 15px;
         }
-        .daily-btn {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white; border: none; padding: 10px; width: 100%;
+
+        .daily-box { background: rgba(124, 58, 237, 0.1); border: 1px solid rgba(124, 58, 237, 0.3); }
+
+        .referral-box {
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.1) 0%, rgba(124, 58, 237, 0.1) 100%);
+            border: 1px solid rgba(236, 72, 153, 0.4);
+        }
+
+        .daily-btn, .copy-btn {
+            color: white; border: none; padding: 12px; width: 100%;
             border-radius: 10px; font-weight: 700; cursor: pointer;
             transition: 0.3s; margin-top: 10px;
         }
+
+        .daily-btn { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
         .daily-btn:disabled { background: #333; cursor: not-allowed; opacity: 0.6; }
+
+        .copy-btn { 
+            background: linear-gradient(135deg, #ec4899 0%, #7c3aed 100%); 
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .copy-btn:active { transform: scale(0.98); }
 
         h2 { 
             font-size: 1.6rem; font-weight: 700; margin-top: 40px; margin-bottom: 20px;
@@ -91,7 +105,7 @@
         .card { 
             background: var(--card-bg); border-radius: 16px; padding: 22px; 
             border: 1px solid rgba(124, 58, 237, 0.15); display: flex; 
-            flex-direction: column; justify-content: space-between; transition: all 0.3s ease;
+            flex-direction: column; justify-content: space-between;
         }
         
         .reward-tag { 
@@ -106,16 +120,6 @@
             font-weight: 700; cursor: pointer; margin-top: 15px; width: 100%; transition: 0.3s;
         }
         .action-btn:disabled { background: #2a2a3e !important; color: #666 !important; cursor: not-allowed; }
-
-        .danger-zone {
-            margin-top: 60px; padding: 30px; border: 2px dashed rgba(239, 68, 68, 0.3);
-            border-radius: 20px; text-align: center; background: rgba(239, 68, 68, 0.05);
-        }
-        .reset-btn {
-            background: transparent; color: var(--danger); border: 2px solid var(--danger);
-            padding: 10px 25px; border-radius: 25px; font-weight: 700; cursor: pointer; transition: 0.3s;
-        }
-        .reset-btn:hover { background: var(--danger); color: white; }
 
         .stat-label { font-size: 0.75rem; font-weight: 700; color: var(--text-sub); letter-spacing: 2px; }
         .cooldown-text { font-size: 0.75rem; color: var(--warning); margin-top: 10px; font-weight: 600; }
@@ -135,6 +139,13 @@
             <p id="daily-status" style="font-size: 0.8rem; margin: 5px 0;">Available Now!</p>
             <button class="daily-btn" id="daily-claim-btn" onclick="claimDaily()">CLAIM 50 PTS</button>
         </div>
+
+        <div class="referral-box">
+            <p style="font-size: 0.8rem; margin: 0; font-weight: 800; color: #ec4899;">🔥 INVITE FRIENDS 🔥</p>
+            <p style="font-size: 0.7rem; color: var(--text-sub); margin: 8px 0;">Get 1,000 pts for every new user who joins!</p>
+            <button class="copy-btn" onclick="copySecretCode()">Copy Code</button>
+            <p style="font-size: 0.6rem; margin-top: 8px; color: #ec4899;">🔥 Tap to copy your unique code 🔥</p>
+        </div>
     </div>
 
     <div class="content-panel">
@@ -143,23 +154,20 @@
 
         <h2>Redeem Rewards</h2>
         <div class="grid" id="reward-container"></div>
-
-        <div class="danger-zone">
-            <span style="color: var(--danger); font-weight: 700;">⚠️ DANGER ZONE</span>
-            <p style="color: var(--text-sub); font-size: 0.9rem;">Delete all progress permanently.</p>
-            <button class="reset-btn" onclick="resetAllData()">RESET EVERYTHING</button>
-        </div>
     </div>
 </div>
 
 <script>
+    // EDIT THIS TEXT: This is what gets copied to the user's clipboard
+    const HIDDEN_REFERRAL_TEXT = "https://brendonbhatta.github.io/Pasal/";
+
     const QUESTS = [
         { id: 'sub', title: 'Subscribe to Channel', points: 200, link: 'https://www.youtube.com/@AnimatedSheikh' },
-        { id: 'v1', title: 'Watch Full video', points: 100, link: 'https://www.youtube.com/watch?v=SInlMgLlfKQ' },
-        { id: 'v2', title: 'Watch Full video', points: 100, link: 'https://www.youtube.com/watch?v=ALSEpg-mz5Q' },
-        { id: 'v3', title: 'like video', points: 100, link: 'https://www.youtube.com/shorts/VHvKMKgbpuM' }, // Placeholder link
-        { id: 'v4', title: 'like Video', points: 100, link: 'https://www.youtube.com/shorts/ytAOSALIHeE' }, // Placeholder link
-        { id: 'v5', title: 'like Video', points: 100, link: 'https://www.youtube.com/shorts/ZHSeV5A74QY' }, // Placeholder link
+        { id: 'v1', title: 'Watch Video 1', points: 100, link: 'https://www.youtube.com/watch?v=SInlMgLlfKQ' },
+        { id: 'v2', title: 'Watch Video 2', points: 100, link: 'https://www.youtube.com/watch?v=ALSEpg-mz5Q' },
+        { id: 'v3', title: 'Watch Video 3', points: 100, link: 'https://www.youtube.com/watch?v=SInlMgLlfKQ' },
+        { id: 'v4', title: 'Watch Video 4', points: 100, link: 'https://www.youtube.com/watch?v=SInlMgLlfKQ' },
+        { id: 'v5', title: 'Watch Video 5', points: 100, link: 'https://www.youtube.com/watch?v=SInlMgLlfKQ' },
     ];
 
     const REWARDS = [
@@ -170,8 +178,6 @@
     ];
 
     const COOLDOWN_TIME = 24 * 60 * 60 * 1000;
-    const DAILY_REWARD_PTS = 50;
-
     let points = parseInt(localStorage.getItem('pasal_points')) || 0;
 
     function init() {
@@ -179,41 +185,33 @@
         renderRewards();
         updatePointsDisplay();
         checkDailyStatus();
-        checkCooldowns(); 
-        
-        setInterval(() => {
-            checkCooldowns();
-            checkDailyStatus();
-        }, 5000); 
+        checkCooldowns();
+        setInterval(() => { checkCooldowns(); checkDailyStatus(); }, 5000);
+    }
+
+    function copySecretCode() {
+        navigator.clipboard.writeText(HIDDEN_REFERRAL_TEXT);
+        alert("Referral code copied successfully! 🔥");
     }
 
     function renderQuests() {
         const container = document.getElementById('quest-container');
         const now = Date.now();
-
         container.innerHTML = QUESTS.map(q => {
             const lastDone = localStorage.getItem('time-' + q.id);
             const isPending = localStorage.getItem('pending-' + q.id);
-            
             let btnText = "Start";
             let btnStyle = "";
             let isDisabled = "";
 
             if (lastDone && (now - lastDone < COOLDOWN_TIME)) {
-                btnText = "COMPLETED";
-                isDisabled = "disabled";
-                btnStyle = "background: #2a2a3e";
+                btnText = "COMPLETED"; isDisabled = "disabled"; btnStyle = "background: #2a2a3e";
             } else if (isPending === 'true') {
-                btnText = "CLAIM POINTS";
-                btnStyle = "background: linear-gradient(135deg, #10b981 0%, #059669 100%)";
+                btnText = "CLAIM POINTS"; btnStyle = "background: linear-gradient(135deg, #10b981 0%, #059669 100%)";
             }
-
             return `
-                <div class="card" id="card-${q.id}">
-                    <div>
-                        <span class="reward-tag">+${q.points} Points</span>
-                        <h4 style="margin: 5px 0;">${q.title}</h4>
-                    </div>
+                <div class="card">
+                    <div><span class="reward-tag">+${q.points} Points</span><h4 style="margin: 5px 0;">${q.title}</h4></div>
                     <button class="action-btn" id="btn-${q.id}" ${isDisabled} style="${btnStyle}" onclick="handleQuest('${q.id}', '${q.link}', ${q.points})">${btnText}</button>
                     <div class="cooldown-text" id="timer-${q.id}" style="display:none"></div>
                 </div>
@@ -225,39 +223,56 @@
         const container = document.getElementById('reward-container');
         container.innerHTML = REWARDS.map(r => `
             <div class="card">
-                <div>
-                    <h4 style="margin:0;">${r.name}</h4>
-                    <p style="font-weight:700; color:var(--accent-light); margin: 5px 0;">${r.cost.toLocaleString()} pts</p>
-                </div>
+                <div><h4>${r.name}</h4><p style="font-weight:700; color:var(--accent-light);">${r.cost.toLocaleString()} pts</p></div>
                 <button class="action-btn" onclick="redeem('${r.name}', ${r.cost})">Redeem</button>
             </div>
         `).join('');
+    }
+
+    function handleQuest(id, link, amount) {
+        const btn = document.getElementById('btn-' + id);
+        if (localStorage.getItem('pending-' + id) === 'true') {
+            points += amount;
+            localStorage.setItem('pasal_points', points);
+            localStorage.setItem('time-' + id, Date.now());
+            localStorage.removeItem('pending-' + id);
+            updatePointsDisplay();
+            checkCooldowns();
+            alert("Reward Claimed!");
+        } else {
+            window.open(link, '_blank');
+            localStorage.setItem('pending-' + id, 'true');
+            btn.innerText = "CLAIM POINTS";
+            btn.style.background = "linear-gradient(135deg, #10b981 0%, #059669 100%)";
+        }
     }
 
     function updatePointsDisplay() {
         document.getElementById('total-points').innerText = points.toLocaleString();
     }
 
-    function handleQuest(id, link, amount) {
-        const btn = document.getElementById('btn-' + id);
-        const isPending = localStorage.getItem('pending-' + id);
-        
-        if (isPending === 'true' || btn.innerText === "CLAIM POINTS") {
-            points += amount;
-            localStorage.setItem('pasal_points', points);
-            localStorage.setItem('time-' + id, Date.now());
-            localStorage.removeItem('pending-' + id);
-            
-            updatePointsDisplay();
-            checkCooldowns();
-            alert("Reward Claimed!");
+    function checkDailyStatus() {
+        const lastDaily = localStorage.getItem('pasal_last_daily');
+        const btn = document.getElementById('daily-claim-btn');
+        const status = document.getElementById('daily-status');
+        const now = Date.now();
+        if (lastDaily && (now - lastDaily < COOLDOWN_TIME)) {
+            const rem = COOLDOWN_TIME - (now - lastDaily);
+            const h = Math.floor(rem / 3600000);
+            const m = Math.floor((rem % 3600000) / 60000);
+            btn.disabled = true; btn.innerText = "CLAIMED";
+            status.innerText = `Next gift in ${h}h ${m}m`;
         } else {
-            window.open(link, '_blank');
-            localStorage.setItem('pending-' + id, 'true'); 
-            
-            btn.innerText = "CLAIM POINTS";
-            btn.style.background = "linear-gradient(135deg, #10b981 0%, #059669 100%)";
+            btn.disabled = false; btn.innerText = "CLAIM 50 PTS"; status.innerText = "Available Now!";
         }
+    }
+
+    function claimDaily() {
+        points += 50;
+        localStorage.setItem('pasal_points', points);
+        localStorage.setItem('pasal_last_daily', Date.now());
+        updatePointsDisplay(); checkDailyStatus();
+        alert("Daily Reward Claimed! +50 Points");
     }
 
     function checkCooldowns() {
@@ -267,82 +282,23 @@
             const isPending = localStorage.getItem('pending-' + q.id);
             const btn = document.getElementById('btn-' + q.id);
             const timer = document.getElementById('timer-' + q.id);
-
             if (!btn) return;
-
             if (lastDone && (now - lastDone < COOLDOWN_TIME)) {
-                const remaining = COOLDOWN_TIME - (now - lastDone);
-                const hrs = Math.floor(remaining / 3600000);
-                const mins = Math.floor((remaining % 3600000) / 60000);
-                
-                btn.disabled = true;
-                btn.innerText = "COMPLETED";
-                btn.style.background = "#2a2a3e";
+                btn.disabled = true; btn.innerText = "COMPLETED"; btn.style.background = "#2a2a3e";
                 timer.style.display = 'block';
-                timer.innerText = `Reset in ${hrs}h ${mins}m`;
+                const rem = COOLDOWN_TIME - (now - lastDone);
+                timer.innerText = `Reset in ${Math.floor(rem / 3600000)}h ${Math.floor((rem % 3600000) / 60000)}m`;
             } else if (isPending === 'true') {
-                btn.disabled = false;
-                btn.innerText = "CLAIM POINTS";
-                btn.style.background = "linear-gradient(135deg, #10b981 0%, #059669 100%)";
-                timer.style.display = 'none';
-            } else {
-                btn.disabled = false;
-                btn.innerText = "START";
-                btn.style.background = "linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)";
-                timer.style.display = 'none';
+                btn.innerText = "CLAIM POINTS"; btn.style.background = "linear-gradient(135deg, #10b981 0%, #059669 100%)";
             }
         });
     }
 
-    function checkDailyStatus() {
-        const lastDaily = localStorage.getItem('pasal_last_daily');
-        const btn = document.getElementById('daily-claim-btn');
-        const status = document.getElementById('daily-status');
-        const now = Date.now();
-
-        if (lastDaily && (now - lastDaily < COOLDOWN_TIME)) {
-            const remaining = COOLDOWN_TIME - (now - lastDaily);
-            const hrs = Math.floor(remaining / 3600000);
-            const mins = Math.floor((remaining % 3600000) / 60000);
-            btn.disabled = true;
-            btn.innerText = "CLAIMED";
-            status.innerText = `Next gift in ${hrs}h ${mins}m`;
-        } else {
-            btn.disabled = false;
-            btn.innerText = "CLAIM 50 PTS";
-            status.innerText = "Available Now!";
-        }
-    }
-
-    function claimDaily() {
-        points += DAILY_REWARD_PTS;
-        localStorage.setItem('pasal_points', points);
-        localStorage.setItem('pasal_last_daily', Date.now());
-        updatePointsDisplay();
-        checkDailyStatus();
-        alert("Daily Reward Claimed! +50 Points");
-    }
-
-    function resetAllData() {
-        if (confirm("Delete everything? This cannot be undone.")) {
-            localStorage.clear();
-            points = 0;
-            updatePointsDisplay();
-            renderQuests();
-            checkDailyStatus();
-            alert("Data Wiped.");
-        }
-    }
-
     function redeem(name, cost) {
         if (points >= cost) {
-            points -= cost;
-            localStorage.setItem('pasal_points', points);
-            updatePointsDisplay();
-            alert(`Redeemed ${name}!`);
-        } else {
-            alert(`Need ${(cost - points).toLocaleString()} more points!`);
-        }
+            points -= cost; localStorage.setItem('pasal_points', points);
+            updatePointsDisplay(); alert(`Redeemed ${name}!`);
+        } else { alert(`Need ${(cost - points).toLocaleString()} more points!`); }
     }
 
     init();
