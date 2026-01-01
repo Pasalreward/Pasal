@@ -78,11 +78,11 @@
             margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05);
         }
 
-        /* REFERRAL HIGHLIGHT STYLES */
+        /* REFERRAL HIGHLIGHT */
         .referral-highlight {
             border: 2px solid var(--accent) !important;
-            background: rgba(124, 58, 237, 0.1);
-            box-shadow: 0 0 15px rgba(124, 58, 237, 0.4);
+            background: rgba(124, 58, 237, 0.15);
+            box-shadow: 0 0 20px rgba(124, 58, 237, 0.3);
             position: relative;
             overflow: hidden;
         }
@@ -100,10 +100,7 @@
             transform: rotate(45deg);
         }
 
-        .bonus-text {
-            color: var(--success);
-            font-weight: 800;
-        }
+        .bonus-text { color: var(--success); font-weight: 800; }
 
         .action-btn { 
             background: var(--accent); color: white; border: none; padding: 12px;
@@ -149,10 +146,10 @@
     </div>
 
     <div class="card referral-highlight">
-        <p style="font-size: 0.8rem; margin: 0; opacity: 0.8;">Invite Friends</p>
-        <h3 style="margin: 5px 0;">Get <span class="bonus-text">1,000 POINTS</span> Each!</h3>
+        <p style="font-size: 0.8rem; margin: 0; opacity: 0.8;">Limited Time Bonus</p>
+        <h3 style="margin: 5px 0;">Invite & Get <span class="bonus-text">1,000 PTS</span></h3>
         <p style="font-size: 0.75rem; color: var(--text-sub); margin-bottom: 15px;">
-            Share your link. When a friend joins, you both get a massive bonus.
+            Copy your unique link and send it to friends. Get 1,000 points for every person who joins!
         </p>
         <button class="action-btn" style="background: transparent; border: 2px solid var(--accent);" onclick="copyLink()">COPY INVITE LINK</button>
     </div>
@@ -197,14 +194,24 @@
         { id: 'q5', title: 'like Video 2', pts: 150, url: 'https://www.youtube.com/shorts/VHvKMKgbpuM' }
     ];
 
-    // FIXED REWARDS ARRAY
     const REWARDS = [
+        // ROBLOX
         { name: '500 Robux', cost: 3000 },
         { name: '1000 Robux', cost: 6000 },
-        { name: '1000 FreeFire Diamonds', cost: 2500 },
-        { name: '2000 FreeFire Diamonds', cost: 5000 },
+        { name: '2500 Robux (Mega)', cost: 14000 },
+        // FREE FIRE
+        { name: 'FF Weekly Member Pass', cost: 1500 },
+        { name: '1000 FF Diamonds', cost: 2500 },
+        { name: '2000 FF Diamonds', cost: 5000 },
+        { name: '5000 FF Diamonds (Mega)', cost: 12000 },
+        // MLBB
+        { name: 'MLBB Weekly Diamond Pass', cost: 2000 },
+        { name: 'MLBB Starlight Member', cost: 4500 },
         { name: 'MLBB 1000 Diamonds', cost: 8000 },
-        { name: 'MLBB 2000 Diamonds', cost: 12000 }
+        { name: 'MLBB 2000 Diamonds', cost: 12000 },
+        // EXTRA
+        { name: 'Google Play $5 Card', cost: 5000 },
+        { name: 'Steam $10 Wallet', cost: 9500 }
     ];
 
     const FAKE_PLAYERS = [
@@ -233,14 +240,11 @@
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         document.getElementById(pageId).classList.add('active');
         
-        // Handle nav highlighting logic
         const navItems = document.querySelectorAll('.nav-item');
         if (pageId === 'home') navItems[0].classList.add('active');
-        if (pageId === 'leaderboard') navItems[1].classList.add('active');
+        if (pageId === 'leaderboard') { navItems[1].classList.add('active'); renderLeaderboard(); }
         if (pageId === 'earn') navItems[2].classList.add('active');
         if (pageId === 'rewards') navItems[3].classList.add('active');
-        
-        if(pageId === 'leaderboard') renderLeaderboard();
     }
 
     function saveName() {
@@ -327,7 +331,7 @@
         if (points >= cost) {
             points -= cost;
             updateUI();
-            alert("Redeem successful for " + name);
+            alert("Order Requested: " + name + ". Please contact admin to verify your Game ID.");
         } else {
             alert("Not enough points!");
         }
@@ -356,10 +360,9 @@
     }
 
     function copyLink() {
-        // Updated copy text to show the 1,000 point reward
-        const inviteText = "https://brendonbhatta.github.io/Pasal/";
-        navigator.clipboard.writeText(inviteText);
-        alert("Referral link copied! Send it to friends to earn 1,000 points.");
+        const shareMsg = "Join Pasal Rewards, finish tasks, and get 1,000 points instantly! https://brendonbhatta.github.io/Pasal/";
+        navigator.clipboard.writeText(shareMsg);
+        alert("Referral Link Copied! Share with friends to get 1,000 pts.");
     }
 
     init();
