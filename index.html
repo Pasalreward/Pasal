@@ -23,11 +23,10 @@
             background: var(--bg);
             color: var(--text-main); 
             margin: 0;
-            padding-bottom: 80px; /* Space for bottom nav */
+            padding-bottom: 80px; 
             min-height: 100vh;
         }
 
-        /* Navigation */
         nav { 
             background: rgba(26, 26, 46, 0.95);
             backdrop-filter: blur(10px);
@@ -56,13 +55,11 @@
 
         .nav-item.active { color: var(--accent-light); }
 
-        /* Pages */
         .page { display: none; padding: 20px; max-width: 800px; margin: 0 auto; animation: fadeIn 0.3s; }
         .page.active { display: block; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Wallet Card */
         .wallet-card {
             background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%);
             padding: 30px; border-radius: 24px; text-align: center;
@@ -71,7 +68,6 @@
 
         .points-val { font-size: 3.5rem; font-weight: 800; margin: 5px 0; }
 
-        /* Modal */
         #name-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg); display: none; align-items: center; justify-content: center; z-index: 2000;
@@ -163,11 +159,11 @@
     const COOLDOWN = 24 * 60 * 60 * 1000;
 
     const QUESTS = [
-        { id: 'q1', title: 'Subscribe to Channel', pts: 200, url: 'www.youtube.com/@AnimatedSheikh' },
-        { id: 'q2', title: 'Watch FULL Video', pts: 100, url: '//www.youtube.com/watch?v=SInlMgLlfKQ' },
-        { id: 'q3', title: 'Watch FULL Video 2', pts: 150, url: 'www.youtube.com/watch?v=ALSEpg-mz5Q' },
-        { id: 'q4', title: 'like Video', pts: 150, url: '//www.youtube.com/shorts/ZHSeV5A74QY' },
-        { id: 'q4', title: 'like Video 2', pts: 150, url: '/www.youtube.com/shorts/VHvKMKgbpuM' }
+        { id: 'q1', title: 'Subscribe to Channel', pts: 200, url: 'https://www.youtube.com/@AnimatedSheikh' },
+        { id: 'q2', title: 'Watch FULL Video', pts: 100, url: 'https://www.youtube.com/watch?v=SInlMgLlfKQ' },
+        { id: 'q3', title: 'Watch FULL Video 2', pts: 150, url: 'https://www.youtube.com/watch?v=ALSEpg-mz5Q' },
+        { id: 'q4', title: 'like Video', pts: 150, url: 'https://www.youtube.com/shorts/ZHSeV5A74QY' },
+        { id: 'q5', title: 'like Video 2', pts: 150, url: 'https://www.youtube.com/shorts/VHvKMKgbpuM' }
     ];
 
     const REWARDS = [
@@ -176,9 +172,13 @@
         { name: 'MLBB 1000 Diamonds', cost: 8000 }
     ];
 
+    // Added Cyber_Hero with 1200 points
     const FAKE_PLAYERS = [
-        { name: "SumanYT", pts: 8500 }, { name: "Rohan_Pro", pts: 6200 }, 
-        { name: "Nepal_Gamer", pts: 4100 }, { name: "Lucky_07", pts: 1500 }
+        { name: "SumanYT", pts: 8500 }, 
+        { name: "Rohan_Pro", pts: 6200 }, 
+        { name: "Nepal_Gamer", pts: 4100 }, 
+        { name: "Cyber_Hero", pts: 1200 }, 
+        { name: "Lucky_07", pts: 1100 }
     ];
 
     function init() {
@@ -198,7 +198,12 @@
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         document.getElementById(pageId).classList.add('active');
-        event.currentTarget.classList.add('active');
+        
+        // Handle nav highlighting
+        if (event && event.currentTarget) {
+            event.currentTarget.classList.add('active');
+        }
+        
         if(pageId === 'leaderboard') renderLeaderboard();
     }
 
@@ -217,7 +222,15 @@
 
     function renderLeaderboard() {
         const myName = localStorage.getItem('pasal_name') || "You";
-        let all = [...FAKE_PLAYERS, { name: myName + " (You)", pts: points }].sort((a,b) => b.pts - a.pts);
+        
+        // Only include the user if their points are STRICTLY MORE than 1200
+        let displayList = [...FAKE_PLAYERS];
+        if (points > 1200) {
+            displayList.push({ name: myName + " (You)", pts: points });
+        }
+
+        let all = displayList.sort((a,b) => b.pts - a.pts);
+
         document.getElementById('lb-data').innerHTML = all.map((p, i) => `
             <tr class="${p.name.includes('(You)') ? 'me-row' : ''}">
                 <td>${i+1}</td>
