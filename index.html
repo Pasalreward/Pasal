@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pasal Rewards Pro</title>
+    
+    <meta property="og:title" content="Pasal Rewards Pro">
+    <meta property="og:description" content="Join now, complete tasks, and earn 1,000 points instantly!">
+    <meta property="og:image" content="logo.png">
+    <meta property="og:type" content="website">
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -30,7 +36,7 @@
         nav { 
             background: rgba(26, 26, 46, 0.95);
             backdrop-filter: blur(10px);
-            padding: 1rem 5%; 
+            padding: 0.8rem 5%; 
             display: flex; 
             justify-content: space-between;
             align-items: center;
@@ -38,7 +44,12 @@
             position: sticky; top: 0; z-index: 100;
         }
 
-        .logo { font-weight: 800; font-size: 1.2rem; color: var(--accent-light); }
+        /* LOGO STYLING */
+        .nav-logo {
+            height: 35px; /* Adjust height as needed */
+            width: auto;
+            display: block;
+        }
 
         .bottom-nav {
             position: fixed; bottom: 0; width: 100%;
@@ -78,7 +89,6 @@
             margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05);
         }
 
-        /* REFERRAL HIGHLIGHT */
         .referral-highlight {
             border: 2px solid var(--accent) !important;
             background: rgba(124, 58, 237, 0.15);
@@ -120,6 +130,7 @@
 
 <div id="name-modal">
     <div style="text-align: center; width: 80%;">
+        <img src="logo.png" style="width: 80px; margin-bottom: 10px;">
         <h2>Welcome to Pasal ✦</h2>
         <input type="text" id="username-input" placeholder="Your Name" 
                style="width: 100%; padding: 15px; border-radius: 10px; border: none; margin: 20px 0;">
@@ -128,7 +139,7 @@
 </div>
 
 <nav>
-    <div class="logo">PASAL REWARDS</div>
+    <img src="logo.png" alt="Pasal Logo" class="nav-logo">
     <div id="user-display" style="font-size: 0.8rem; color: var(--accent-light);"></div>
 </nav>
 
@@ -195,21 +206,17 @@
     ];
 
     const REWARDS = [
-        // ROBLOX
         { name: '500 Robux', cost: 3000 },
         { name: '1000 Robux', cost: 6000 },
         { name: '2500 Robux (Mega)', cost: 14000 },
-        // FREE FIRE
         { name: 'FF Weekly Member Pass', cost: 1500 },
         { name: '1000 FF Diamonds', cost: 2500 },
         { name: '2000 FF Diamonds', cost: 5000 },
         { name: '5000 FF Diamonds (Mega)', cost: 12000 },
-        // MLBB
         { name: 'MLBB Weekly Diamond Pass', cost: 2000 },
         { name: 'MLBB Starlight Member', cost: 4500 },
         { name: 'MLBB 1000 Diamonds', cost: 8000 },
         { name: 'MLBB 2000 Diamonds', cost: 12000 },
-        // EXTRA
         { name: 'Google Play $5 Card', cost: 5000 },
         { name: 'Steam $10 Wallet', cost: 9500 }
     ];
@@ -362,7 +369,7 @@
     function copyLink() {
         const shareMsg = "Join Pasal Rewards, finish tasks, and get 1,000 points instantly! https://brendonbhatta.github.io/Pasal/";
         navigator.clipboard.writeText(shareMsg);
-        alert("Referral Link Copied! Share with friends to get 1,000 pts.");
+        alert("Referral Link Copied! Send it to friends to get 1,000 pts.");
     }
 
     init();
