@@ -14,12 +14,6 @@
     <meta property="og:description" content="Official Pasal Rewards Page">
     <meta property="og:image" content="https://pasalreward.github.io/Pasal/preview.png">
 
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://pasalreward.github.io/Pasal/">
-    <meta property="twitter:title" content="Pasal Rewards Pro">
-    <meta property="twitter:description" content="Join Pasal Rewards to earn points and win game currency!">
-    <meta property="twitter:image" content="https://pasalreward.github.io/Pasal/preview.png">
-
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -209,18 +203,19 @@
         { id: 'q5', title: 'like Video 2', pts: 150, url: 'https://www.youtube.com/shorts/VHvKMKgbpuM' }
     ];
 
+    // UPDATED REWARD PRICES
     const REWARDS = [
         { name: '500 Robux', cost: 7000 },
         { name: '1000 Robux', cost: 14000 },
-        { name: '2500 Robux (Mega)', cost: 14000 },
+        { name: '2500 Robux (Mega)', cost: 35000 },
         { name: 'FF Monthly Member Pass', cost: 10000 },
         { name: '1000 FF Diamonds', cost: 25000 },
         { name: '2000 FF Diamonds', cost: 50000 },
-        { name: '5000 FF Diamonds (Mega)', cost: 12000 },
-        { name: 'MLBB Weekly Diamond Pass', cost: 20000 },
+        { name: '5000 FF Diamonds (Mega)', cost: 120000 },
+        { name: 'MLBB Weekly Diamond Pass', cost: 2000 },
         { name: 'MLBB Starlight Member', cost: 8000 },
         { name: 'MLBB 1000 Diamonds', cost: 8000 },
-        { name: 'MLBB 2000 Diamonds', cost: 12000 },
+        { name: 'MLBB 2000 Diamonds', cost: 15000 },
         { name: 'Google Play $5 Card', cost: 7000 },
         { name: 'Steam $10 Wallet', cost: 9500 }
     ];
@@ -260,7 +255,7 @@
         if (pageId === 'home') navItems[0].classList.add('active');
         if (pageId === 'leaderboard') { navItems[1].classList.add('active'); renderLeaderboard(); }
         if (pageId === 'earn') { navItems[2].classList.add('active'); renderQuests(); }
-        if (pageId === 'rewards') navItems[3].classList.add('active');
+        if (pageId === 'rewards') { navItems[3].classList.add('active'); renderRewards(); }
     }
 
     function saveName() {
@@ -352,7 +347,7 @@
         document.getElementById('reward-list').innerHTML = REWARDS.map(r => `
             <div class="card">
                 <strong>${r.name}</strong>
-                <p style="color:var(--accent-light)">${r.cost} Points</p>
+                <p style="color:var(--accent-light)">${r.cost.toLocaleString()} Points</p>
                 <button class="action-btn" onclick="redeem('${r.name}', ${r.cost})">Redeem</button>
             </div>
         `).join('');
@@ -362,9 +357,9 @@
         if (points >= cost) {
             points -= cost;
             updateUI();
-            alert("Order Requested: " + name + ". Your order is placed will Verify it and let you know! might take upto 3 days");
+            alert("Order Requested: " + name + ". Your order is placed. We will verify it and let you know! Might take up to 3 days.");
         } else {
-            alert("Not enough points!");
+            alert("Not enough points! You need " + (cost - points).toLocaleString() + " more points.");
         }
     }
 
