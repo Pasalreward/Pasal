@@ -4,12 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pasal Rewards Pro</title>
-    
-    <meta property="og:title" content="Pasal Rewards Pro">
-    <meta property="og:description" content="Join now, complete tasks, and earn 1,000 points instantly!">
-    <meta property="og:image" content="logo.png">
-    <meta property="og:type" content="website">
-
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -36,7 +30,7 @@
         nav { 
             background: rgba(26, 26, 46, 0.95);
             backdrop-filter: blur(10px);
-            padding: 0.8rem 5%; 
+            padding: 1rem 5%; 
             display: flex; 
             justify-content: space-between;
             align-items: center;
@@ -44,12 +38,7 @@
             position: sticky; top: 0; z-index: 100;
         }
 
-        /* LOGO STYLING */
-        .nav-logo {
-            height: 35px; /* Adjust height as needed */
-            width: auto;
-            display: block;
-        }
+        .logo { font-weight: 800; font-size: 1.2rem; color: var(--accent-light); }
 
         .bottom-nav {
             position: fixed; bottom: 0; width: 100%;
@@ -117,7 +106,7 @@
             border-radius: 12px; font-weight: 700; width: 100%; cursor: pointer; margin-top: 10px;
         }
 
-        .action-btn:disabled { background: #333; opacity: 0.5; }
+        .action-btn:disabled { background: #333; opacity: 0.5; cursor: not-allowed; }
 
         table { width: 100%; border-collapse: collapse; }
         th { text-align: left; color: var(--text-sub); font-size: 0.8rem; padding: 10px; }
@@ -130,7 +119,6 @@
 
 <div id="name-modal">
     <div style="text-align: center; width: 80%;">
-        <img src="logo.png" style="width: 80px; margin-bottom: 10px;">
         <h2>Welcome to Pasal ✦</h2>
         <input type="text" id="username-input" placeholder="Your Name" 
                style="width: 100%; padding: 15px; border-radius: 10px; border: none; margin: 20px 0;">
@@ -139,7 +127,7 @@
 </div>
 
 <nav>
-    <img src="logo.png" alt="Pasal Logo" class="nav-logo">
+    <div class="logo">PASAL REWARDS</div>
     <div id="user-display" style="font-size: 0.8rem; color: var(--accent-light);"></div>
 </nav>
 
@@ -196,6 +184,7 @@
 <script>
     let points = parseInt(localStorage.getItem('pasal_pts')) || 0;
     const COOLDOWN = 24 * 60 * 60 * 1000;
+    const QUEST_TIMER = 15000; // 15 seconds
 
     const QUESTS = [
         { id: 'q1', title: 'Subscribe to Channel', pts: 200, url: 'https://www.youtube.com/@AnimatedSheikh' },
@@ -240,6 +229,12 @@
         renderQuests();
         renderRewards();
         setInterval(updateDailyStatus, 1000);
+        // Refresh Earn page every second to update countdowns
+        setInterval(() => {
+            if (document.getElementById('earn').classList.contains('active')) {
+                renderQuests();
+            }
+        }, 1000);
     }
 
     function showPage(pageId) {
@@ -250,7 +245,7 @@
         const navItems = document.querySelectorAll('.nav-item');
         if (pageId === 'home') navItems[0].classList.add('active');
         if (pageId === 'leaderboard') { navItems[1].classList.add('active'); renderLeaderboard(); }
-        if (pageId === 'earn') navItems[2].classList.add('active');
+        if (pageId === 'earn') { navItems[2].classList.add('active'); renderQuests(); }
         if (pageId === 'rewards') navItems[3].classList.add('active');
     }
 
@@ -287,14 +282,29 @@
     function renderQuests() {
         document.getElementById('quest-list').innerHTML = QUESTS.map(q => {
             const done = localStorage.getItem('done-' + q.id);
-            const pending = localStorage.getItem('pend-' + q.id);
+            const startTime = localStorage.getItem('start-' + q.id);
+            
             let btnText = "Start Quest";
             let btnFn = `startQuest('${q.id}', '${q.url}')`;
+            let isDisabled = false;
             
             if (done && (Date.now() - done < COOLDOWN)) {
-                btnText = "Completed"; btnFn = "";
-            } else if (pending) {
-                btnText = "Claim Points"; btnFn = `claimQuest('${q.id}', ${q.pts})`;
+                btnText = "Completed";
+                isDisabled = true;
+                btnFn = "";
+            } else if (startTime) {
+                const elapsed = Date.now() - parseInt(startTime);
+                const remaining = Math.ceil((QUEST_TIMER - elapsed) / 1000);
+                
+                if (remaining > 0) {
+                    btnText = `Wait ${remaining}s...`;
+                    isDisabled = true;
+                    btnFn = "";
+                } else {
+                    btnText = "Claim Points";
+                    btnFn = `claimQuest('${q.id}', ${q.pts})`;
+                    isDisabled = false;
+                }
             }
 
             return `
@@ -303,7 +313,7 @@
                         <strong>${q.title}</strong>
                         <span style="color:var(--success)">+${q.pts}</span>
                     </div>
-                    <button class="action-btn" onclick="${btnFn}" ${btnText==='Completed'?'disabled':''}>${btnText}</button>
+                    <button class="action-btn" onclick="${btnFn}" ${isDisabled ? 'disabled' : ''}>${btnText}</button>
                 </div>
             `;
         }).join('');
@@ -311,17 +321,17 @@
 
     function startQuest(id, url) {
         window.open(url, '_blank');
-        localStorage.setItem('pend-' + id, 'true');
+        localStorage.setItem('start-' + id, Date.now());
         renderQuests();
     }
 
     function claimQuest(id, amt) {
         points += amt;
-        localStorage.removeItem('pend-' + id);
+        localStorage.removeItem('start-' + id);
         localStorage.setItem('done-' + id, Date.now());
         updateUI();
         renderQuests();
-        alert("Points added!");
+        alert("Points added successfully!");
     }
 
     function renderRewards() {
@@ -367,9 +377,9 @@
     }
 
     function copyLink() {
-        const shareMsg = "Join Pasal Rewards, finish tasks, and get 1,000 points instantly! https://brendonbhatta.github.io/Pasal/";
+        const shareMsg = "https://brendonbhatta.github.io/Pasal/";
         navigator.clipboard.writeText(shareMsg);
-        alert("Referral Link Copied! Send it to friends to get 1,000 pts.");
+        alert("Referral Link Copied! Share with friends to get 1,000 pts.");
     }
 
     init();
